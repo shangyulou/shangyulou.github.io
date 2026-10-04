@@ -16,7 +16,7 @@ Edit `profile.js` and commit to `main`. GitHub Pages automatically publishes upd
 - `cv`: a relative PDF path such as `./cv.pdf`, or a complete HTTPS link. Upload the file before adding its path.
 - `updated`: the date of your latest content update, in English.
 
-The initial biography is introductory placeholder text. No academic affiliation, research field, publication, or qualification has been invented.
+The biography and portrait were supplied by Shangyu Lou. Selected publications are shown directly on the About page, in the order given in `profile.js`. The top navigation contains About and Blog.
 
 ## Research interests
 
@@ -44,11 +44,11 @@ Add real publications to `publications`:
 }
 ```
 
-Search and year filters appear when publications are available. Results are ordered by year, newest first. Optional BibTeX entries can be expanded.
+The `publications` array controls the Selected Publications section on the homepage. Entries retain their array order. Use `paper` for the paper page and `pdf` for a public PDF link. Author names matching the profile name are emphasized.
 
-## Curriculum vitae
+## Archived profile fields
 
-Add entries to `experience`:
+`cv` and `experience` are retained in the data file for potential future use but are not displayed. Example:
 
 ```js
 { period: '2024–2026', title: 'Degree or position', institution: 'Your institution', description: 'A short description.' }
@@ -72,10 +72,10 @@ Open `index.html` directly, or run:
 python -m http.server 8000 --bind 127.0.0.1
 ```
 
-Visit http://127.0.0.1:8000/ . The source files are `index.html`, `styles.css`, `site.js`, `profile.js`, and `.nojekyll`.
+Visit http://127.0.0.1:8000/ . The source files are `index.html`, `styles.css`, `site.js`, `profile.js`, `portrait.jpg`, and `.nojekyll`.
 
 ## Deployment
 
 GitHub repository: `shangyulou/shangyulou.github.io`. Settings → Pages → Deploy from a branch → `main` / `(root)`.
 
-Navigation uses URL fragments (`#about`, `#publications`, `#cv`, `#blog`), so direct links work on GitHub Pages without server configuration. With JavaScript disabled, all sections remain available as one long page. A print stylesheet includes all sections. Theme preferences are saved locally in the visitor's browser.
+Navigation uses URL fragments (`#about`, `#blog`, `#selected-publications`), so direct links work on GitHub Pages without server configuration. The former `#publications` link now opens the Selected Publications section on About; `#cv` falls back to About. With JavaScript disabled, all sections remain available as one long page. A print stylesheet includes all sections. Theme preferences are saved locally in the visitor's browser.

@@ -12,7 +12,7 @@
   document.querySelectorAll('[data-last-name]').forEach(el => el.textContent = profile.lastName || '');
   document.querySelectorAll('[data-full-name]').forEach(el => el.textContent = fullName);
   $('year').textContent = new Date().getFullYear(); $('updated').textContent = profile.updated || 'October 4, 2026';
-  document.querySelector('meta[name="description"]').content = `${fullName}'s academic homepage. Research interests, publications, curriculum vitae, and writing.`;
+  document.querySelector('meta[name="description"]').content = `${fullName}'s academic homepage. Research interests, selected publications, and writing.`;
   document.querySelector('meta[property="og:title"]').content = `${fullName} | Academic Homepage`;
   const affiliation = [text(profile.role),text(profile.affiliation)].filter(Boolean).join(' · '); $('affiliation').textContent = affiliation; $('affiliation').hidden = !affiliation;
   const github = safeUrl(profile.github);
@@ -52,30 +52,23 @@
     const ul = element('ul'); profile.research.forEach(item => { const li = element('li'); if(typeof item === 'string') li.textContent = item; else { li.append(element('strong',text(item.title))); if(item.description) li.append(document.createTextNode(': '+text(item.description))); } ul.append(li); }); $('research-content').replaceChildren(ul);
   }
   const publications = Array.isArray(profile.publications) ? profile.publications : [];
-  function renderPublications() {
-    if(!publications.length) return;
-    const query = $('publication-search').value.trim().toLowerCase(), year = $('publication-year').value, list = $('publication-list'); list.replaceChildren();
-    const filtered = publications.filter(item => (!year || String(item.year) === year) && [text(item.title),text(item.authors),text(item.venue),(item.keywords || []).map(text).join(' ')].join(' ').toLowerCase().includes(query)).slice().sort((a,b) => Number(b.year)-Number(a.year));
-    if(!filtered.length) list.append(element('p','No matching publications. Try another keyword or year.','empty-message'));
-    filtered.forEach(item => {
-      const article = element('article',undefined,'publication'); article.append(element('div',[item.year,text(item.venue)].filter(Boolean).join(' · '),'pub-meta'),element('h2',text(item.title)),element('p',text(item.authors),'authors'));
-      const links = element('div',undefined,'pub-links');
-      for(const [key,label] of [['paper','Paper'],['code','Code'],['project','Project']]) { const url = safeUrl(item[key]); if(url) links.append(link(label+' ↗',url)); }
-      if(item.bibtex) { const details = element('details'); details.append(element('summary','BibTeX'),element('pre',item.bibtex)); links.append(details); }
-      article.append(links); list.append(article);
-    });
-  }
   if(publications.length) {
-    $('publication-tools').hidden = false;
-    [...new Set(publications.map(item => String(item.year)).filter(year => /^\d{4}$/.test(year)))].sort().reverse().forEach(year => { const option = element('option',year); option.value = year; $('publication-year').append(option); });
-    renderPublications();
+    const list = $('publication-list'); list.replaceChildren();
+    for(const item of publications) {
+      const article = element('article',undefined,'selected-publication');
+      const content = element('div',undefined,'publication-content');
+      const title = element('h3'); const paper = safeUrl(item.paper);
+      if(paper) title.append(link(text(item.title),paper)); else title.textContent = text(item.title);
+      const authors = element('p',undefined,'authors');
+      text(item.authors).split(fullName).forEach((part,i) => { if(i) authors.append(element('strong',fullName)); authors.append(document.createTextNode(part)); });
+      content.append(title,authors,element('p',text(item.venue),'publication-venue'));
+      const links = element('div',undefined,'paper-links');
+      for(const [key,label] of [['paper','Paper'],['pdf','PDF']]) { const url = safeUrl(item[key]); if(url) links.append(link(label+' ↗',url)); }
+      content.append(links); article.append(element('span',String(item.year),'publication-year'),content); list.append(article);
+    }
   }
-  $('publication-search').addEventListener('input',renderPublications); $('publication-year').addEventListener('change',renderPublications);
-  const cv = safeUrl(profile.cv); if(cv) { $('cv-download').href = cv; $('cv-download').hidden = false; }
-  if(profile.experience?.length) { $('experience-content').replaceChildren(); profile.experience.forEach(item => { const row = element('article',undefined,'experience-item'), body = element('div'); body.append(element('h2',text(item.title)),element('p',text(item.institution))); if(item.description) body.append(element('p',text(item.description))); row.append(element('time',text(item.period)),body); $('experience-content').append(row); }); }
-  else if(cv) $('experience-content').replaceChildren(element('p','Please download the PDF above for my full curriculum vitae.'));
   if(profile.posts?.length) { $('blog-content').replaceChildren(); profile.posts.forEach(item => { const article = element('article',undefined,'post'), title = element('h2'), url = safeUrl(item.url); if(url) title.append(link(text(item.title),url)); else title.textContent = text(item.title); const time = element('time',text(item.date)); article.append(time,title,element('p',text(item.summary))); if(item.content) article.append(element('p',text(item.content))); $('blog-content').append(article); }); }
-  const pageTitles = {about:'About',publications:'Publications',cv:'Curriculum Vitae',blog:'Blog'};
+  const pageTitles = {about:'About',blog:'Blog'};
   function route(moveFocus) {
     const requested = location.hash.slice(1);
     if(requested === 'main') { $('main').focus({preventScroll:true}); return; }
@@ -83,7 +76,8 @@
     document.querySelectorAll('.page').forEach(section => section.hidden = section.id !== page);
     document.querySelectorAll('[data-page]').forEach(a => { if(a.dataset.page === page) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current'); });
     document.title = `${fullName} | ${pageTitles[page]}`;
-    if(moveFocus) { $('main').focus({preventScroll:true}); window.scrollTo({top:0,behavior:'instant'}); }
+    if(requested === 'publications' || requested === 'selected-publications') { $('selected-publications').scrollIntoView({block:'start'}); }
+    else if(moveFocus) { $('main').focus({preventScroll:true}); window.scrollTo({top:0,behavior:'instant'}); }
   }
   window.addEventListener('hashchange',() => route(true)); route(false);
   function setTheme(theme) {

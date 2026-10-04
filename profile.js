@@ -10,7 +10,7 @@ window.ACADEMIC_PROFILE = {
   scholar: 'https://scholar.google.com/citations?user=-legGPcAAAAJ&hlauthuser=1',
   orcid: '',
   twitter: '',
-  photo: '',
+  photo: './portrait.jpg',
   photoAlt: 'Portrait of Shangyu Lou',
   cv: '',
   role: '',
@@ -24,7 +24,32 @@ window.ACADEMIC_PROFILE = {
     'Human dynamics and human mobility',
     'Spatial reasoning in generative AI'
   ],
-  publications: [],
+  publications: [
+  {
+    "title": "PlaceSeek: Human-Centered Geospatial Retrieval of Urban Outdoor Places via Semantic Grounding and Affective Alignment",
+    "authors": "Ziqi Cui, Shangyu Lou",
+    "year": 2026,
+    "venue": "ACM SIGSPATIAL 2026",
+    "paper": "https://arxiv.org/abs/2608.24133",
+    "pdf": "https://arxiv.org/pdf/2608.24133"
+  },
+  {
+    "title": "Enhancing Human Mobility Prediction with Spatially Aware LLM-based Multi-Agent Systems",
+    "authors": "Shangyu Lou, Ziqi Cui",
+    "year": 2026,
+    "venue": "HILDA @ ACM SIGMOD 2026",
+    "paper": "https://arxiv.org/abs/2609.14227",
+    "pdf": "https://arxiv.org/pdf/2609.14227"
+  },
+  {
+    "title": "Urban-MAS: Human-Centered Urban Prediction with LLM-Based Multi-Agent System",
+    "authors": "Shangyu Lou",
+    "year": 2025,
+    "venue": "UrbanAI @ ACM SIGSPATIAL 2025",
+    "paper": "https://arxiv.org/abs/2511.00096",
+    "pdf": "https://arxiv.org/pdf/2511.00096"
+  }
+],
   experience: [],
   posts: [],
   updated: 'October 4, 2026'
