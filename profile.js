@@ -45,16 +45,16 @@ window.ACADEMIC_PROFILE = {
     "authors": "Shangyu Lou, Ziqi Cui",
     "year": 2026,
     "venue": "HILDA @ ACM SIGMOD 2026",
-    "paper": "https://arxiv.org/abs/2609.14227",
-    "pdf": "https://arxiv.org/pdf/2609.14227"
+    "paper": "https://dl.acm.org/doi/full/10.1145/3814573.3814949",
+    "pdf": "https://dl.acm.org/doi/pdf/10.1145/3814573.3814949"
   },
   {
     "title": "Urban-MAS: Human-Centered Urban Prediction with LLM-Based Multi-Agent System",
     "authors": "Shangyu Lou",
     "year": 2025,
     "venue": "UrbanAI @ ACM SIGSPATIAL 2025",
-    "paper": "https://arxiv.org/abs/2511.00096",
-    "pdf": "https://arxiv.org/pdf/2511.00096"
+    "paper": "https://dl.acm.org/doi/abs/10.1145/3764926.3771951",
+    "pdf": "https://dl.acm.org/doi/pdf/10.1145/3764926.3771951"
   }
 ],
   experience: [],
