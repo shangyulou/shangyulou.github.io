@@ -20,6 +20,14 @@
   if(profile.biography?.length) {
     $('biography').replaceChildren();
     profile.biography.forEach(paragraph => {
+      if(Array.isArray(paragraph.parts)) {
+        const p = element('p');
+        paragraph.parts.forEach(part => {
+          if(typeof part === 'string') p.append(document.createTextNode(part));
+          else { const url = safeUrl(part.url); if(url) p.append(link(text(part.text),url)); else p.append(document.createTextNode(text(part.text))); }
+        });
+        $('biography').append(p); return;
+      }
       const p = element('p'); const content = text(paragraph);
       if(github && content.includes('GitHub')) { const parts = content.split('GitHub'); parts.forEach((part,i) => { if(i) p.append(link('GitHub',github)); p.append(document.createTextNode(part)); }); }
       else p.textContent = content;

@@ -16,6 +16,13 @@ window.ACADEMIC_PROFILE = {
   role: '',
   affiliation: '',
   biography: [
+    { parts: [
+      'I am a PhD student in Geography, supervised by Prof. ',
+      { text: 'Ming-Hsiang Tsou', url: 'https://map.sdsu.edu/tsou/' },
+      ' at San Diego State University and Prof. ',
+      { text: 'Peter Kedron', url: 'https://www.geog.ucsb.edu/people/faculty/peter-kedron' },
+      ' at the University of California, Santa Barbara.'
+    ] },
     'My research is grounded in GIScience, with interests in GeoAI and human dynamics.',
     'I am particularly interested in understanding how generative AI engages in spatial reasoning and evaluating the scientific soundness of spatial reasoning in generative AI when applied to geographic research, with a particular focus on human mobility research.'
   ],
