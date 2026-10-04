@@ -12,11 +12,10 @@
   document.querySelectorAll('[data-last-name]').forEach(el => el.textContent = profile.lastName || '');
   document.querySelectorAll('[data-full-name]').forEach(el => el.textContent = fullName);
   $('year').textContent = new Date().getFullYear(); $('updated').textContent = profile.updated || 'October 4, 2026';
-  document.querySelector('meta[name="description"]').content = `${fullName}'s academic homepage. Research interests, selected publications, and writing.`;
+  document.querySelector('meta[name="description"]').content = `${fullName}'s academic homepage. Research and selected publications.`;
   document.querySelector('meta[property="og:title"]').content = `${fullName} | Academic Homepage`;
   const affiliation = [text(profile.role),text(profile.affiliation)].filter(Boolean).join(' · '); $('affiliation').textContent = affiliation; $('affiliation').hidden = !affiliation;
   const github = safeUrl(profile.github);
-  const scholar = safeUrl(profile.scholar);
   if(profile.biography?.length) {
     $('biography').replaceChildren();
     profile.biography.forEach(paragraph => {
@@ -34,12 +33,7 @@
       $('biography').append(p);
     });
   }
-  const contact = $('get-in-touch'); contact.replaceChildren();
   const email = typeof profile.email === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(profile.email) ? profile.email : '';
-  if(email) { contact.append(document.createTextNode('Feel free to get in touch at ')); const a = element('a',email); a.href = 'mailto:'+encodeURIComponent(email); contact.append(a,document.createTextNode('.')); }
-  else if(scholar) contact.append(document.createTextNode('Find me on '),link('Google Scholar',scholar),document.createTextNode('.'));
-  else if(github) contact.append(document.createTextNode('Find me on '),link('GitHub',github),document.createTextNode('.'));
-  else contact.hidden = true;
   const photo = safeUrl(profile.photo);
   if(photo) { const img = element('img'); img.alt = profile.photoAlt || `Portrait of ${fullName}`; img.width = 289; img.height = 375; img.addEventListener('load',() => $('portrait').replaceChildren(img),{once:true}); img.src = photo; }
   const icons = {
@@ -55,9 +49,6 @@
     const a = link('',url); a.setAttribute('aria-label',label+(key === 'email' ? '' : ' profile')); a.title = label;
     const svg = document.createElementNS('http://www.w3.org/2000/svg','svg'); svg.setAttribute('viewBox','0 0 24 24'); svg.setAttribute('aria-hidden','true'); const path = document.createElementNS('http://www.w3.org/2000/svg','path'); path.setAttribute('d',icons[key]); svg.append(path); a.append(svg);
     socials.append(a);
-  }
-  if(profile.research?.length) {
-    const ul = element('ul'); profile.research.forEach(item => { const li = element('li'); if(typeof item === 'string') li.textContent = item; else { li.append(element('strong',text(item.title))); if(item.description) li.append(document.createTextNode(': '+text(item.description))); } ul.append(li); }); $('research-content').replaceChildren(ul);
   }
   const publications = Array.isArray(profile.publications) ? profile.publications : [];
   if(publications.length) {
@@ -75,17 +66,16 @@
       content.append(links); article.append(element('span',String(item.year),'publication-year'),content); list.append(article);
     }
   }
-  if(profile.posts?.length) { $('blog-content').replaceChildren(); profile.posts.forEach(item => { const article = element('article',undefined,'post'), title = element('h2'), url = safeUrl(item.url); if(url) title.append(link(text(item.title),url)); else title.textContent = text(item.title); const time = element('time',text(item.date)); article.append(time,title,element('p',text(item.summary))); if(item.content) article.append(element('p',text(item.content))); $('blog-content').append(article); }); }
-  const pageTitles = {about:'About',blog:'Blog'};
+  const pageTitles = {about:'About','selected-publications':'Selected Publications'};
   function route(moveFocus) {
-    const requested = location.hash.slice(1);
+    const hash = location.hash.slice(1);
+    const requested = hash === 'publications' ? 'selected-publications' : hash;
     if(requested === 'main') { $('main').focus({preventScroll:true}); return; }
     const page = Object.hasOwn(pageTitles,requested) ? requested : 'about';
     document.querySelectorAll('.page').forEach(section => section.hidden = section.id !== page);
     document.querySelectorAll('[data-page]').forEach(a => { if(a.dataset.page === page) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current'); });
     document.title = `${fullName} | ${pageTitles[page]}`;
-    if(requested === 'publications' || requested === 'selected-publications') { $('selected-publications').scrollIntoView({block:'start'}); }
-    else if(moveFocus) { $('main').focus({preventScroll:true}); window.scrollTo({top:0,behavior:'instant'}); }
+    if(moveFocus) { $('main').focus({preventScroll:true}); window.scrollTo({top:0,behavior:'instant'}); }
   }
   window.addEventListener('hashchange',() => route(true)); route(false);
   function setTheme(theme) {

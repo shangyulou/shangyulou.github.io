@@ -28,3 +28,5 @@ html[data-theme='dark']{color-scheme:dark;--bg:#1c1c1d;--text:#ededee;--muted:#b
 .paper-links a:hover{background:var(--accent);color:var(--bg);text-decoration:none}
 @media(max-width:600px){.site-header nav{flex:0;justify-content:flex-end;gap:22px}.site-header nav a{font-size:15px}.header-inner{gap:20px}.selected-publications{margin-top:25px;padding-top:24px}.selected-publications>h2{font-size:26px}.selected-publication{grid-template-columns:1fr;gap:6px;padding:21px 0}.publication-year{font-size:13px}.publication-content h3{font-size:17px}.publication-content .authors{font-size:14px}.publication-venue{font-size:13px}}
 @media print{.selected-publication{break-inside:avoid}.selected-publications{break-inside:auto}.paper-links a{border-color:#aaa}}
+
+.publications-page>h1{margin-bottom:30px}
