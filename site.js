@@ -35,7 +35,7 @@
   }
   const email = typeof profile.email === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(profile.email) ? profile.email : '';
   const photo = safeUrl(profile.photo);
-  if(photo) { const img = element('img'); img.alt = profile.photoAlt || `Portrait of ${fullName}`; img.width = 289; img.height = 375; img.addEventListener('load',() => $('portrait').replaceChildren(img),{once:true}); img.src = photo; }
+  if(photo) { const img = element('img'); img.alt = profile.photoAlt || `Portrait of ${fullName}`; img.width = 627; img.height = 941; img.addEventListener('load',() => $('portrait').replaceChildren(img),{once:true}); img.src = photo; }
   const icons = {
     github:'M12 .75a11.25 11.25 0 0 0-3.56 21.92c.56.1.77-.24.77-.54v-2.1c-3.13.68-3.79-1.33-3.79-1.33-.51-1.3-1.25-1.65-1.25-1.65-1.02-.7.08-.69.08-.69 1.13.08 1.73 1.16 1.73 1.16 1 1.72 2.64 1.23 3.28.94.1-.73.39-1.23.72-1.51-2.5-.29-5.13-1.25-5.13-5.57 0-1.23.44-2.23 1.16-3.02-.12-.29-.5-1.43.11-2.98 0 0 .95-.31 3.1 1.15a10.8 10.8 0 0 1 5.63 0c2.15-1.46 3.09-1.15 3.09-1.15.61 1.55.23 2.69.11 2.98.72.79 1.16 1.79 1.16 3.02 0 4.34-2.64 5.28-5.15 5.56.4.35.76 1.04.76 2.1v3.09c0 .3.2.65.78.54A11.25 11.25 0 0 0 12 .75Z',
     email:'M2 4h20v16H2V4Zm1.8 2 8.2 6 8.2-6H3.8Zm16.4 12V8.5L12 14.5 3.8 8.5V18h16.4Z',
