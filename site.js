@@ -1,78 +1,96 @@
+/* English-only academic homepage. No dependencies or tracking. */
 'use strict';
 (() => {
-  const p = window.ACADEMIC_PROFILE || {};
-  const dict = {
-    zh: {skip:'跳转到正文',navAbout:'关于',navResearch:'研究',navPublications:'学术成果',navContact:'联系',navExperience:'经历',menu:'菜单',tagline:'以好奇心为起点，\n让思考持续生长。',explore:'探索我的研究',cv:'个人简历',figureCaption:'每个问题，都通向新的可能。',aboutTitle:'关于我',aboutLead:'保持好奇，认真思考。',researchTitle:'研究兴趣',researchEmptyTitle:'从问题出发，向未知探索。',researchEmpty:'研究方向与正在探索的课题将在这里更新。',publicationsTitle:'学术成果',publicationsEmptyTitle:'让想法留下痕迹。',publicationsEmpty:'论文、预印本与其他学术成果将陆续收录于此。',experienceTitle:'学习与经历',experienceEmptyTitle:'每一段经历，都是积累。',experienceEmpty:'教育背景与学术经历即将更新。',contactTitle:'在交流中，遇见新的想法。',contactText:'你可以在 GitHub 找到我，了解我的公开项目与动态。',footer:'个人学术主页',backTop:'回到顶部',allYears:'所有年份',search:'搜索标题、作者或关键词',yearLabel:'按年份筛选',noResults:'没有匹配的成果，请尝试其他关键词或年份。',paper:'论文',code:'代码',project:'项目',citation:'引用 / BibTeX',email:'邮箱',pageTitle:'学术主页'},
-    en: {skip:'Skip to content',navAbout:'About',navResearch:'Research',navPublications:'Publications',navContact:'Contact',navExperience:'Background',menu:'Menu',tagline:'Led by curiosity.\nBuilt on thoughtful inquiry.',explore:'Explore my research',cv:'Curriculum vitae',figureCaption:'Every question opens a new possibility.',aboutTitle:'About me',aboutLead:'Stay curious. Think deeply.',researchTitle:'Research interests',researchEmptyTitle:'Begin with a question. Explore the unknown.',researchEmpty:'Research interests and current topics will be shared here.',publicationsTitle:'Publications',publicationsEmptyTitle:'A place for ideas to take shape.',publicationsEmpty:'Papers, preprints, and other scholarly work will be collected here.',experienceTitle:'Background',experienceEmptyTitle:'Every experience adds a new perspective.',experienceEmpty:'Education and academic experience will be added soon.',contactTitle:'Good ideas start with a conversation.',contactText:'Find me on GitHub to explore my public projects and activity.',footer:'Academic homepage',backTop:'Back to top',allYears:'All years',search:'Search titles, authors, or keywords',yearLabel:'Filter by year',noResults:'No matching publications. Try another keyword or year.',paper:'Paper',code:'Code',project:'Project',citation:'Cite / BibTeX',email:'Email',pageTitle:'Academic Homepage'}
-  };
+  const profile = window.ACADEMIC_PROFILE || {};
   const $ = id => document.getElementById(id);
-  let lang = 'zh';
-  try { if (localStorage.getItem('academic-language') === 'en') lang = 'en'; } catch (_) {}
-  const tr = value => typeof value === 'string' ? value : value?.[lang] || value?.en || value?.zh || '';
-  const element = (tag, text, className) => { const el = document.createElement(tag); if(text !== undefined) el.textContent = text; if(className) el.className = className; return el; };
-  const safeUrl = value => { if (!value || typeof value !== 'string') return ''; try { const u = new URL(value, location.href); return ['https:','http:'].includes(u.protocol) || (location.protocol === 'file:' && u.protocol === 'file:') ? u.href : ''; } catch (_) { return ''; } };
-  const link = (label, url) => { const a = element('a', label); a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer'; return a; };
-  const empty = (title, copy) => { const block = element('div',undefined,'empty-state'); block.append(element('h3',title), element('p',copy)); return block; };
-  const publications = Array.isArray(p.publications) ? p.publications : [];
+  const text = value => typeof value === 'string' ? value : value?.en || '';
+  const element = (tag, content, className) => { const el = document.createElement(tag); if(content !== undefined) el.textContent = content; if(className) el.className = className; return el; };
+  const safeUrl = value => { if(!value || typeof value !== 'string') return ''; try { const u = new URL(value,location.href); return ['https:','http:'].includes(u.protocol) || (location.protocol === 'file:' && u.protocol === 'file:') ? u.href : ''; } catch (_) { return ''; } };
+  const link = (label,url) => { const a = element('a',label); a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer'; return a; };
+  const fullName = [profile.firstName,profile.lastName].filter(Boolean).join(' ') || 'shangyulou';
+  document.querySelectorAll('[data-first-name]').forEach(el => el.textContent = profile.firstName || 'shangyulou');
+  document.querySelectorAll('[data-last-name]').forEach(el => el.textContent = profile.lastName || '');
+  document.querySelectorAll('[data-full-name]').forEach(el => el.textContent = fullName);
+  $('year').textContent = new Date().getFullYear(); $('updated').textContent = profile.updated || 'October 4, 2026';
+  document.querySelector('meta[name="description"]').content = `${fullName}'s academic homepage. Research interests, publications, curriculum vitae, and writing.`;
+  document.querySelector('meta[property="og:title"]').content = `${fullName} | Academic Homepage`;
+  const affiliation = [text(profile.role),text(profile.affiliation)].filter(Boolean).join(' · '); $('affiliation').textContent = affiliation; $('affiliation').hidden = !affiliation;
+  const github = safeUrl(profile.github);
+  if(profile.biography?.length) {
+    $('biography').replaceChildren();
+    profile.biography.forEach(paragraph => {
+      const p = element('p'); const content = text(paragraph);
+      if(github && content.includes('GitHub')) { const parts = content.split('GitHub'); parts.forEach((part,i) => { if(i) p.append(link('GitHub',github)); p.append(document.createTextNode(part)); }); }
+      else p.textContent = content;
+      $('biography').append(p);
+    });
+  }
+  const contact = $('get-in-touch'); contact.replaceChildren();
+  const email = typeof profile.email === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(profile.email) ? profile.email : '';
+  if(email) { contact.append(document.createTextNode('Feel free to get in touch at ')); const a = element('a',email); a.href = 'mailto:'+encodeURIComponent(email); contact.append(a,document.createTextNode('.')); }
+  else if(github) contact.append(document.createTextNode('Find me on '),link('GitHub',github),document.createTextNode('.'));
+  else contact.hidden = true;
+  const photo = safeUrl(profile.photo);
+  if(photo) { const img = element('img'); img.alt = profile.photoAlt || `Portrait of ${fullName}`; img.width = 289; img.height = 375; img.addEventListener('load',() => $('portrait').replaceChildren(img),{once:true}); img.src = photo; }
+  const githubIcon = $('social-links').querySelector('svg').cloneNode(true);
+  const icons = {
+    email:'M2 4h20v16H2V4Zm1.8 2 8.2 6 8.2-6H3.8Zm16.4 12V8.5L12 14.5 3.8 8.5V18h16.4Z',
+    scholar:'m12 2 12 8-12 8L0 10l12-8Zm-7 11v5c4 4 10 4 14 0v-5l-7 4.7L5 13Z',
+    orcid:'M12 0a12 12 0 1 0 0 24 12 12 0 0 0 0-24ZM6.5 5a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4ZM5.6 9h1.8v10H5.6V9Zm4.2 0h4.1c7 0 7 10 0 10H9.8V9Zm1.8 1.6v6.8h2.2c4.7 0 4.7-6.8 0-6.8h-2.2Z',
+    twitter:'M18.9 2H22l-6.8 7.8L23.2 22h-6.3L12 14.6 5.5 22H2.3l8.2-9.4L.8 2h6.5l5.9 7.8L18.9 2ZM17.8 20h1.8L6.3 3.9H4.4L17.8 20Z'
+  };
+  const socials = $('social-links'); socials.replaceChildren();
+  for(const [key,label] of [['email','Email'],['scholar','Google Scholar'],['github','GitHub'],['orcid','ORCID'],['twitter','X / Twitter']]) {
+    const url = key === 'email' ? (email ? 'mailto:'+encodeURIComponent(email) : '') : safeUrl(profile[key]); if(!url) continue;
+    const a = link('',url); a.setAttribute('aria-label',label+(key === 'email' ? '' : ' profile')); a.title = label;
+    if(key === 'github') a.append(githubIcon);
+    else { const svg = document.createElementNS('http://www.w3.org/2000/svg','svg'); svg.setAttribute('viewBox','0 0 24 24'); svg.setAttribute('aria-hidden','true'); const path = document.createElementNS('http://www.w3.org/2000/svg','path'); path.setAttribute('d',icons[key]); svg.append(path); a.append(svg); }
+    socials.append(a);
+  }
+  if(profile.research?.length) {
+    const ul = element('ul'); profile.research.forEach(item => { const li = element('li'); if(typeof item === 'string') li.textContent = item; else { li.append(element('strong',text(item.title))); if(item.description) li.append(document.createTextNode(': '+text(item.description))); } ul.append(li); }); $('research-content').replaceChildren(ul);
+  }
+  const publications = Array.isArray(profile.publications) ? profile.publications : [];
   function renderPublications() {
-    const d = dict[lang], list = $('publication-list'); list.replaceChildren();
-    if (!publications.length) { list.append(empty(d.publicationsEmptyTitle,d.publicationsEmpty)); return; }
-    const query = $('publication-search').value.trim().toLocaleLowerCase(); const year = $('publication-year').value;
-    const filtered = publications.filter(item => (!year || String(item.year) === year) && [tr(item.title),tr(item.authors),tr(item.venue),(item.keywords || []).map(tr).join(' ')].join(' ').toLocaleLowerCase().includes(query)).slice().sort((a,b) => Number(b.year)-Number(a.year));
-    if (!filtered.length) { list.append(element('p',d.noResults,'no-results')); return; }
-    for (const item of filtered) {
-      const article = element('article',undefined,'publication');
-      article.append(element('div',[item.year,tr(item.venue)].filter(Boolean).join(' · '),'pub-meta'),element('h3',tr(item.title)),element('p',tr(item.authors),'authors'));
+    if(!publications.length) return;
+    const query = $('publication-search').value.trim().toLowerCase(), year = $('publication-year').value, list = $('publication-list'); list.replaceChildren();
+    const filtered = publications.filter(item => (!year || String(item.year) === year) && [text(item.title),text(item.authors),text(item.venue),(item.keywords || []).map(text).join(' ')].join(' ').toLowerCase().includes(query)).slice().sort((a,b) => Number(b.year)-Number(a.year));
+    if(!filtered.length) list.append(element('p','No matching publications. Try another keyword or year.','empty-message'));
+    filtered.forEach(item => {
+      const article = element('article',undefined,'publication'); article.append(element('div',[item.year,text(item.venue)].filter(Boolean).join(' · '),'pub-meta'),element('h2',text(item.title)),element('p',text(item.authors),'authors'));
       const links = element('div',undefined,'pub-links');
-      for (const key of ['paper','code','project']) { const url = safeUrl(item[key]); if(url) links.append(link(d[key]+' ↗',url)); }
-      if(item.bibtex) { const details = element('details'); details.append(element('summary',d.citation),element('pre',item.bibtex)); links.append(details); }
+      for(const [key,label] of [['paper','Paper'],['code','Code'],['project','Project']]) { const url = safeUrl(item[key]); if(url) links.append(link(label+' ↗',url)); }
+      if(item.bibtex) { const details = element('details'); details.append(element('summary','BibTeX'),element('pre',item.bibtex)); links.append(details); }
       article.append(links); list.append(article);
-    }
+    });
   }
-  function render() {
-    const d = dict[lang];
-    document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
-    document.title = `${tr(p.name) || 'shangyulou'} · ${d.pageTitle}`;
-    document.querySelector('meta[name="description"]').content = tr(p.introduction);
-    document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = d[el.dataset.i18n] || ''; });
-    document.querySelector('.tagline').style.whiteSpace = 'pre-line';
-    document.querySelectorAll('[data-name]').forEach(el => el.textContent = tr(p.name) || 'shangyulou');
-    document.querySelectorAll('[data-initials]').forEach(el => el.textContent = p.initials || 'SL');
-    document.querySelector('.brand').setAttribute('aria-label',`${tr(p.name)} — ${d.backTop}`);
-    $('navigation').setAttribute('aria-label',lang === 'zh' ? '主导航' : 'Main navigation');
-    document.querySelector('.index-bar').setAttribute('aria-label',lang === 'zh' ? '页面索引' : 'Page index');
-    document.querySelector('.figure svg').setAttribute('aria-label',lang === 'zh' ? '相互交织的轨道，象征探索与连接' : 'Interwoven orbits representing exploration and connection');
-    $('introduction').textContent = tr(p.introduction); $('about-text').textContent = tr(p.about);
-    const meta = [tr(p.role),tr(p.affiliation)].filter(Boolean).join(' · '); $('hero-meta').textContent = meta; $('hero-meta').hidden = !meta;
-    $('language-toggle').textContent = lang === 'zh' ? 'EN ↗' : '中文 ↗'; $('language-toggle').setAttribute('aria-label',lang === 'zh' ? 'Switch to English' : '切换为中文');
-    const cv = safeUrl(p.cv); $('cv-link').hidden = !cv; if(cv) $('cv-link').href = cv;
-    const github = safeUrl(p.github);
-    document.querySelectorAll('.github-link').forEach(a => { a.hidden = !github; if(github) a.href = github; });
-    const social = $('academic-links'); social.replaceChildren();
-    for(const [key,label] of [['github','GitHub'],['scholar','Google Scholar'],['orcid','ORCID']]) { const url = safeUrl(p[key]); if(url) social.append(link(label+' ↗',url)); }
-    const research = $('research-content'); research.replaceChildren();
-    if(!p.research?.length) research.append(empty(d.researchEmptyTitle,d.researchEmpty));
-    else { const grid = element('div',undefined,'research-grid'); p.research.forEach((item,i) => { const card = element('article',undefined,'research-item'); card.append(element('span',String(i+1).padStart(2,'0'),'research-number'),element('h3',tr(item.title)),element('p',tr(item.description))); grid.append(card); }); research.append(grid); }
-    const experience = $('experience-content'); experience.replaceChildren();
-    if(!p.experience?.length) experience.append(empty(d.experienceEmptyTitle,d.experienceEmpty));
-    else p.experience.forEach(item => { const row = element('article',undefined,'experience-item'), body = element('div'); body.append(element('h3',tr(item.title)),element('p',tr(item.institution)),element('p',tr(item.description))); row.append(element('time',tr(item.period)),body); experience.append(row); });
-    $('publication-tools').hidden = !publications.length;
-    $('publication-search').placeholder = d.search; $('publication-search').setAttribute('aria-label',d.search);
-    const selectedYear = $('publication-year').value; $('publication-year').replaceChildren(); $('publication-year').setAttribute('aria-label',d.yearLabel);
-    const all = element('option',d.allYears); all.value = ''; $('publication-year').append(all);
+  if(publications.length) {
+    $('publication-tools').hidden = false;
     [...new Set(publications.map(item => String(item.year)).filter(year => /^\d{4}$/.test(year)))].sort().reverse().forEach(year => { const option = element('option',year); option.value = year; $('publication-year').append(option); });
-    $('publication-year').value = selectedYear; renderPublications();
-    const contact = $('contact-links'); contact.replaceChildren();
-    if(github) contact.append(link('GitHub / '+new URL(github).pathname.replace(/^\//,'').replace(/\/$/,'')+' ↗',github));
-    if(p.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(p.email)) { const a = element('a',p.email+' ↗'); a.href = 'mailto:'+encodeURIComponent(p.email); contact.prepend(a); }
-    $('year').textContent = new Date().getFullYear();
+    renderPublications();
   }
-  $('language-toggle').addEventListener('click',() => { lang = lang === 'zh' ? 'en' : 'zh'; try { localStorage.setItem('academic-language',lang); } catch (_) {} render(); });
-  const closeMenu = () => { $('navigation').classList.remove('open'); $('menu-toggle').setAttribute('aria-expanded','false'); };
-  $('menu-toggle').addEventListener('click',() => { const open = $('navigation').classList.toggle('open'); $('menu-toggle').setAttribute('aria-expanded',String(open)); });
-  $('navigation').querySelectorAll('a').forEach(a => a.addEventListener('click',closeMenu));
-  document.addEventListener('keydown',event => { if(event.key === 'Escape' && $('navigation').classList.contains('open')) { closeMenu(); $('menu-toggle').focus(); } });
   $('publication-search').addEventListener('input',renderPublications); $('publication-year').addEventListener('change',renderPublications);
-  if('IntersectionObserver' in window) { const observer = new IntersectionObserver(entries => { for(const entry of entries) if(entry.isIntersecting) { $('navigation').querySelectorAll('a').forEach(a => { if(a.hash === '#'+entry.target.id) a.setAttribute('aria-current','location'); else a.removeAttribute('aria-current'); }); } },{rootMargin:'-15% 0px -50% 0px',threshold:0}); document.querySelectorAll('main section[id]').forEach(section => observer.observe(section)); }
-  render();
+  const cv = safeUrl(profile.cv); if(cv) { $('cv-download').href = cv; $('cv-download').hidden = false; }
+  if(profile.experience?.length) { $('experience-content').replaceChildren(); profile.experience.forEach(item => { const row = element('article',undefined,'experience-item'), body = element('div'); body.append(element('h2',text(item.title)),element('p',text(item.institution))); if(item.description) body.append(element('p',text(item.description))); row.append(element('time',text(item.period)),body); $('experience-content').append(row); }); }
+  else if(cv) $('experience-content').replaceChildren(element('p','Please download the PDF above for my full curriculum vitae.'));
+  if(profile.posts?.length) { $('blog-content').replaceChildren(); profile.posts.forEach(item => { const article = element('article',undefined,'post'), title = element('h2'), url = safeUrl(item.url); if(url) title.append(link(text(item.title),url)); else title.textContent = text(item.title); const time = element('time',text(item.date)); article.append(time,title,element('p',text(item.summary))); if(item.content) article.append(element('p',text(item.content))); $('blog-content').append(article); }); }
+  const pageTitles = {about:'About',publications:'Publications',cv:'Curriculum Vitae',blog:'Blog'};
+  function route(moveFocus) {
+    const requested = location.hash.slice(1);
+    if(requested === 'main') { $('main').focus({preventScroll:true}); return; }
+    const page = Object.hasOwn(pageTitles,requested) ? requested : 'about';
+    document.querySelectorAll('.page').forEach(section => section.hidden = section.id !== page);
+    document.querySelectorAll('[data-page]').forEach(a => { if(a.dataset.page === page) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current'); });
+    document.title = `${fullName} | ${pageTitles[page]}`;
+    if(moveFocus) { $('main').focus({preventScroll:true}); window.scrollTo({top:0,behavior:'instant'}); }
+  }
+  window.addEventListener('hashchange',() => route(true)); route(false);
+  function setTheme(theme) {
+    document.documentElement.dataset.theme = theme;
+    const dark = theme === 'dark', label = dark ? 'Switch to light mode' : 'Switch to dark mode';
+    $('theme-toggle').setAttribute('aria-label',label); $('theme-toggle').title = label; $('theme-toggle').setAttribute('aria-pressed',String(dark));
+    document.querySelector('meta[name="theme-color"]').content = dark ? '#1c1c1d' : '#ffffff';
+  }
+  let theme = 'light'; try { if(localStorage.getItem('academic-theme') === 'dark') theme = 'dark'; } catch (_) {} setTheme(theme);
+  $('theme-toggle').addEventListener('click',() => { const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'; setTheme(next); try { localStorage.setItem('academic-theme',next); } catch (_) {} });
 })();

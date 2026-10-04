@@ -1,28 +1,34 @@
-# shangyulou · 学术主页
+# Shangyu Lou — Academic Homepage
 
-网站地址：https://shangyulou.github.io/
+Live website: https://shangyulou.github.io/
 
-简洁的中英双语学术主页。原生 HTML、CSS 和 JavaScript，无依赖、无构建步骤、无追踪器，可部署在 GitHub Pages。包含响应式布局、键盘导航、减少动画偏好支持和打印样式。
+An English-only academic homepage with a white background, magenta links, a right-aligned portrait, simple navigation, a dark footer, and a light/dark theme toggle. Uses plain HTML, CSS, and JavaScript, with no build tools, third-party fonts, analytics, or runtime dependencies.
 
-## 更新内容
+## Edit your information
 
-只需修改 `profile.js` 中的个人资料，提交到 `main` 分支，GitHub Pages 会重新发布。未填写学校、邮箱、简历时不会出现虚假链接。初版仅使用公开 GitHub 用户名，未填写的研究和经历显示「即将更新」。
+Edit `profile.js` and commit to `main`. GitHub Pages automatically publishes updates.
 
-- `name`：公开姓名；`initials`：头像字母。
-- `role` / `affiliation`：身份 / 学校或机构。
-- `introduction` / `about`：简介 / 关于我。
-- `email`：希望公开的邮箱。不要填不想公开的个人信息。
-- `github` / `scholar` / `orcid`：公开主页的完整 HTTPS 链接。
-- `cv`：简历链接，如 `./cv.pdf`（需上传同名文件）。
-- 文本可写字符串，或 `{ zh: '中文内容', en: 'English content' }`。
+- `firstName`, `lastName`: your public name.
+- `biography`: an array of English paragraphs.
+- `role`, `affiliation`: optional position and institution.
+- `photo`: a relative image path such as `./portrait.jpg`. Upload the actual photo to the same repository. Until then, the site shows a clearly labeled placeholder. Use `photoAlt` to describe the image.
+- `email`, `github`, `scholar`, `orcid`, `twitter`: public contact details and profile links. Empty values are hidden. Only add information you want publicly visible.
+- `cv`: a relative PDF path such as `./cv.pdf`, or a complete HTTPS link. Upload the file before adding its path.
+- `updated`: the date of your latest content update, in English.
 
-研究方向示例（将示例替换为真实信息后填入 `research` 数组）：
+The initial biography is introductory placeholder text. No academic affiliation, research field, publication, or qualification has been invented.
+
+## Research interests
+
+Add strings or objects to `research`:
 
 ```js
-{ title: { zh: '你的研究方向', en: 'Your research area' }, description: { zh: '研究简介', en: 'A short description' } }
+{ title: 'Your research area', description: 'A short description of your work.' }
 ```
 
-论文示例（填入 `publications` 数组）：
+## Publications
+
+Add real publications to `publications`:
 
 ```js
 {
@@ -38,26 +44,38 @@
 }
 ```
 
-添加真实论文后会自动出现标题、作者、关键词搜索和年份筛选。BibTeX 可展开复制。论文按年份从新到旧显示。
+Search and year filters appear when publications are available. Results are ordered by year, newest first. Optional BibTeX entries can be expanded.
 
-经历示例（填入 `experience` 数组）：
+## Curriculum vitae
+
+Add entries to `experience`:
 
 ```js
-{ period: '2024–2026', title: '你的学位或职位', institution: '你的学校或机构', description: '简短说明' }
+{ period: '2024–2026', title: 'Degree or position', institution: 'Your institution', description: 'A short description.' }
 ```
 
-## 本地预览
+## Blog
 
-直接打开 `index.html`，或者在本目录执行：
+Add entries to `posts`:
+
+```js
+{ title: 'Your post title', date: 'October 4, 2026', summary: 'An introduction.', content: 'Optional full text.', url: '' }
+```
+
+An optional `url` links to an externally hosted full article. Keep entries in your preferred display order.
+
+## Preview locally
+
+Open `index.html` directly, or run:
 
 ```sh
 python -m http.server 8000 --bind 127.0.0.1
 ```
 
-然后访问 http://127.0.0.1:8000/ 。发布文件只有 `index.html`、`profile.js`、`site.js` 和 `.nojekyll`。
+Visit http://127.0.0.1:8000/ . The source files are `index.html`, `styles.css`, `site.js`, `profile.js`, and `.nojekyll`.
 
-## GitHub Pages
+## Deployment
 
-仓库名：`shangyulou.github.io`。仓库 Settings → Pages → Deploy from a branch → `main` / `(root)` → Save。
+GitHub repository: `shangyulou/shangyulou.github.io`. Settings → Pages → Deploy from a branch → `main` / `(root)`.
 
-[GitHub 官方发布说明](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)
+Navigation uses URL fragments (`#about`, `#publications`, `#cv`, `#blog`), so direct links work on GitHub Pages without server configuration. With JavaScript disabled, all sections remain available as one long page. A print stylesheet includes all sections. Theme preferences are saved locally in the visitor's browser.

@@ -1,26 +1,28 @@
-/* 修改这里即可更新主页。未填写的学校、邮箱、简历不会显示。
- * 文本可以使用字符串，或 { zh: '中文', en: 'English' }。
- * 论文格式见 README.md。请只填写你希望公开的信息。
+/* Public profile data. Edit this file to update the website.
+ * Leave unavailable fields blank. Only publish information you want to share.
+ * See README.md for research, publication, experience, and blog examples.
  */
 window.ACADEMIC_PROFILE = {
-  name: 'shangyulou',
-  initials: 'SL',
-  role: '',
-  affiliation: '',
-  introduction: {
-    zh: '欢迎来到我的学术主页。这里是记录研究、整理思考与分享知识的地方。',
-    en: 'Welcome to my academic home on the web. A place to document research, collect ideas, and share knowledge.'
-  },
-  about: {
-    zh: '我希望在这里留下探索的过程：从一个问题的提出，到想法的形成，再到新的发现。研究方向、学术成果与个人经历将陆续更新。',
-    en: 'This space follows the process of exploration: from asking a question to developing an idea and finding something new. Research interests, publications, and background will be added over time.'
-  },
+  firstName: 'Shangyu',
+  lastName: 'Lou',
   github: 'https://github.com/shangyulou',
   email: '',
   scholar: '',
   orcid: '',
+  twitter: '',
+  photo: '',
+  photoAlt: 'Portrait of Shangyu Lou',
   cv: '',
+  role: '',
+  affiliation: '',
+  biography: [
+    'Welcome to my academic homepage. This is where I will share my research interests, academic work, and the questions I am exploring.',
+    'This website is a work in progress. Details about my academic background, current research, and experience will be added here.',
+    'You can find my public projects and activity on GitHub. Publications, a curriculum vitae, and occasional writing will be available through the links above as this site grows.'
+  ],
   research: [],
   publications: [],
-  experience: []
+  experience: [],
+  posts: [],
+  updated: 'October 4, 2026'
 };
