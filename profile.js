@@ -10,7 +10,7 @@ window.ACADEMIC_PROFILE = {
   scholar: 'https://scholar.google.com/citations?user=-legGPcAAAAJ&hlauthuser=1',
   orcid: '',
   twitter: '',
-  photo: './portrait.jpg?v=20261004-9',
+  photo: './portrait.jpg?v=20261004-10',
   photoAlt: 'Portrait of Shangyu Lou',
   cv: '',
   role: '',
