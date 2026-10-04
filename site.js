@@ -16,6 +16,7 @@
   document.querySelector('meta[property="og:title"]').content = `${fullName} | Academic Homepage`;
   const affiliation = [text(profile.role),text(profile.affiliation)].filter(Boolean).join(' · '); $('affiliation').textContent = affiliation; $('affiliation').hidden = !affiliation;
   const github = safeUrl(profile.github);
+  const scholar = safeUrl(profile.scholar);
   if(profile.biography?.length) {
     $('biography').replaceChildren();
     profile.biography.forEach(paragraph => {
@@ -28,12 +29,13 @@
   const contact = $('get-in-touch'); contact.replaceChildren();
   const email = typeof profile.email === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(profile.email) ? profile.email : '';
   if(email) { contact.append(document.createTextNode('Feel free to get in touch at ')); const a = element('a',email); a.href = 'mailto:'+encodeURIComponent(email); contact.append(a,document.createTextNode('.')); }
+  else if(scholar) contact.append(document.createTextNode('Find me on '),link('Google Scholar',scholar),document.createTextNode('.'));
   else if(github) contact.append(document.createTextNode('Find me on '),link('GitHub',github),document.createTextNode('.'));
   else contact.hidden = true;
   const photo = safeUrl(profile.photo);
   if(photo) { const img = element('img'); img.alt = profile.photoAlt || `Portrait of ${fullName}`; img.width = 289; img.height = 375; img.addEventListener('load',() => $('portrait').replaceChildren(img),{once:true}); img.src = photo; }
-  const githubIcon = $('social-links').querySelector('svg').cloneNode(true);
   const icons = {
+    github:'M12 .75a11.25 11.25 0 0 0-3.56 21.92c.56.1.77-.24.77-.54v-2.1c-3.13.68-3.79-1.33-3.79-1.33-.51-1.3-1.25-1.65-1.25-1.65-1.02-.7.08-.69.08-.69 1.13.08 1.73 1.16 1.73 1.16 1 1.72 2.64 1.23 3.28.94.1-.73.39-1.23.72-1.51-2.5-.29-5.13-1.25-5.13-5.57 0-1.23.44-2.23 1.16-3.02-.12-.29-.5-1.43.11-2.98 0 0 .95-.31 3.1 1.15a10.8 10.8 0 0 1 5.63 0c2.15-1.46 3.09-1.15 3.09-1.15.61 1.55.23 2.69.11 2.98.72.79 1.16 1.79 1.16 3.02 0 4.34-2.64 5.28-5.15 5.56.4.35.76 1.04.76 2.1v3.09c0 .3.2.65.78.54A11.25 11.25 0 0 0 12 .75Z',
     email:'M2 4h20v16H2V4Zm1.8 2 8.2 6 8.2-6H3.8Zm16.4 12V8.5L12 14.5 3.8 8.5V18h16.4Z',
     scholar:'m12 2 12 8-12 8L0 10l12-8Zm-7 11v5c4 4 10 4 14 0v-5l-7 4.7L5 13Z',
     orcid:'M12 0a12 12 0 1 0 0 24 12 12 0 0 0 0-24ZM6.5 5a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4ZM5.6 9h1.8v10H5.6V9Zm4.2 0h4.1c7 0 7 10 0 10H9.8V9Zm1.8 1.6v6.8h2.2c4.7 0 4.7-6.8 0-6.8h-2.2Z',
@@ -43,8 +45,7 @@
   for(const [key,label] of [['email','Email'],['scholar','Google Scholar'],['github','GitHub'],['orcid','ORCID'],['twitter','X / Twitter']]) {
     const url = key === 'email' ? (email ? 'mailto:'+encodeURIComponent(email) : '') : safeUrl(profile[key]); if(!url) continue;
     const a = link('',url); a.setAttribute('aria-label',label+(key === 'email' ? '' : ' profile')); a.title = label;
-    if(key === 'github') a.append(githubIcon);
-    else { const svg = document.createElementNS('http://www.w3.org/2000/svg','svg'); svg.setAttribute('viewBox','0 0 24 24'); svg.setAttribute('aria-hidden','true'); const path = document.createElementNS('http://www.w3.org/2000/svg','path'); path.setAttribute('d',icons[key]); svg.append(path); a.append(svg); }
+    const svg = document.createElementNS('http://www.w3.org/2000/svg','svg'); svg.setAttribute('viewBox','0 0 24 24'); svg.setAttribute('aria-hidden','true'); const path = document.createElementNS('http://www.w3.org/2000/svg','path'); path.setAttribute('d',icons[key]); svg.append(path); a.append(svg);
     socials.append(a);
   }
   if(profile.research?.length) {

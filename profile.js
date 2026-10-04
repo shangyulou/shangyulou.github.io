@@ -5,9 +5,9 @@
 window.ACADEMIC_PROFILE = {
   firstName: 'Shangyu',
   lastName: 'Lou',
-  github: 'https://github.com/shangyulou',
+  github: '',
   email: '',
-  scholar: '',
+  scholar: 'https://scholar.google.com/citations?user=-legGPcAAAAJ&hlauthuser=1',
   orcid: '',
   twitter: '',
   photo: '',
